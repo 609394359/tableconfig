@@ -1,0 +1,54 @@
+{
+  "NLog": {
+    "throwConfigExceptions": true,
+    "targets": {
+      "warn": {
+        "type": "File",
+        "layout": "**************************************************************************************************************************${newline} 日志时间 ： ${longdate} ${newline} 日志来源 ： ${logger} ${newline} 日志级别 ： ${uppercase:${level}} ${newline} 日志内容 ： ${message}${newline}",
+        "fileName": "${basedir}/Logs/${date:format=yyyyMM}/WARN-${shortdate}.log"
+      },
+      "debug": {
+        "type": "File",
+        "layout": "**************************************************************************************************************************${newline} 日志时间 ： ${longdate} ${newline} 日志来源 ： ${logger} ${newline} 日志级别 ： ${uppercase:${level}} ${newline} 日志内容 ： ${message}${newline}",
+        "fileName": "${basedir}/Logs/${date:format=yyyyMM}/DEBUG-${shortdate}.log"
+      },
+      "apitrace1": {
+        "type": "File",
+        "layout": "**************************************************************************************************************************${newline} 日志时间 ： ${longdate} ${newline} 日志来源 ： ${logger} ${newline} 日志级别 ： ${uppercase:${level}} ${newline} 主机地址 ： ${aspnet-request-host} ${newline} 请求接口 ： ${aspnet-request-url:IncludeScheme=false:IncludeHost=false} ${newline} 请求方式 ： ${aspnet-request-method} ${newline} 请求用户 ： ${aspnet-request-headers:HeaderNames=SYSTOKEN:ValuesOnly=true} ${newline} 请求标识 ： ${aspnet-request-useragent} ${newline} 请求参数 ： ${aspnet-request-querystring:OutputFormat=JSON} ${newline} 提交参数 ： ${event-properties:item=RequestBody}${newline} 日志内容 ： ${message}${newline} 用户来源 ： ${aspnet-request-ip}${newline} 请求耗时 ： ${event-properties:item=Elapsed}${newline}",
+        "fileName": "${basedir}/Logs/${date:format=yyyyMM}/TRACE-${shortdate}.log",
+        "archiveAbovesize": "10485760" //单个日志文件10M
+      }
+    },
+    "extensions": [
+      { "assembly": "NLog.Web.AspNetCore" },
+      { "assembly": "NLog.Extensions.Logging" }
+    ],
+    "rules": [
+      {
+        "logger": "*",
+        "level": "Trace",
+        "writeTo": "debug" //接口监测使用
+      },
+      {
+        "logger": "*",
+        "level": "Error",
+        "writeTo": "debug" //系统异常
+      },
+      {
+        "logger": "*",
+        "level": "Info",
+        "writeTo": "debug" //正常日志
+      },
+      {
+        "logger": "*",
+        "level": "Warn",
+        "writeTo": "apitrace1" //警告日志，正式环境根据需要是否配置
+      },
+      {
+        "logger": "*",
+        "level": "Debug",
+        "writeTo": "debug" //Debug日志，正式环境根据需要是否配置
+      }
+    ]
+  }
+}
