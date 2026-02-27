@@ -46,7 +46,7 @@ namespace TableConfig.Controllers.Sys
             var list = await _databaseTypeService.GetListAsync();
             var dict = await _databaseTypeService.GetDatabaseRelationsFieldCount();
 
-            var response = list.Select(m =>
+            var response = list.OrderBy(m => m.Name).Select(m =>
             {
                 var _m = m.Adapt<SysDatabaseTypesRes>();
                 _m.FieldCount = dict.ContainsKey(m.Id) ? dict[m.Id] : 0;

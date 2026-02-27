@@ -45,7 +45,7 @@ namespace TableConfig.Controllers.Sys
             var list = await _fieldTypeService.GetListAsync();
             var relations = await _fieldTypeService.GetRelations();
 
-            var response = list.Select(m =>
+            var response = list.OrderBy(m => m.Name).Select(m =>
             {
                 var _m = m.Adapt<SysFieldTypesRes>();
                 _m.Relations = relations.Where(c=>c.FieldId == m.Id).OrderBy(m=>m.DatabaseName).ToList();

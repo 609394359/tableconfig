@@ -401,6 +401,7 @@ namespace TableConfig.Services.Sys
                 info.UpdateName = tokenInfo.Name;
                 info.UpdateTime = DateTime.Now;
                 info.SortIndex = await _tableFieldsRepository.GetMaxAsync(m => m.TableId == info.TableId, m => m.SortIndex);
+                info.SortIndex = info.SortIndex + 1;
 
                 try
                 {
@@ -468,7 +469,7 @@ namespace TableConfig.Services.Sys
             List<SysTableFields> newFields = new List<SysTableFields>();
             for (var i = 0; i < parm.Ids.Count; i++)
             {
-                newFields.Add(new SysTableFields { Id = parm.Ids[i], SortIndex = i });
+                newFields.Add(new SysTableFields { Id = parm.Ids[i], SortIndex = i + 1 });
             }
 
             await _tableFieldsRepository.UpdateAsync(newFields, m => m.SortIndex);
@@ -486,9 +487,9 @@ namespace TableConfig.Services.Sys
             var fields = await _tableFieldsRepository.GetListAsync(m=>parm.Ids.Contains(m.Id));
 
             var sortIndex = await _tableFieldsRepository.GetMaxAsync(m => m.TableId == parm.TableId, m => m.SortIndex);
+            sortIndex++;
 
-
-            var newFields = fields.Select(m=> { 
+            var newFields = fields.OrderBy(m => m.SortIndex).Select(m=> { 
                 var _m = m.Adapt<SysTableFields>();
                 _m.Id = SnowFlakeSingle.instance.NextId();
                 _m.ProjectId = table.ProjectId;
@@ -504,6 +505,13 @@ namespace TableConfig.Services.Sys
             }).ToList();
 
             await _tableFieldsRepository.InsertAsync(newFields);
+
+            var count = await _tableFieldsRepository.GetCountAsync(m => m.TableId == table.Id);
+
+            await _tablesRepository.UpdateAsync(m => m.Id == table.Id, m => new SysTables
+            {
+                FieldCount = count
+            });
         }
 
         public async Task TableFieldDel(long tableFieldId)

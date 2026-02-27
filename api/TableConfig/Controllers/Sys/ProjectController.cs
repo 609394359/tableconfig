@@ -47,7 +47,7 @@ namespace TableConfig.Controllers.Sys
             var dict1 = await _projectService.GetProjectGroupCount();
             var dict2 = await _projectService.GetProjectTableCount();
 
-            var response = list.Select(m =>
+            var response = list.OrderBy(m=>m.Name).Select(m =>
             {
                 var _m = m.Adapt<SysProjectsRes>();
                 _m.GroupCount = dict1.ContainsKey(m.Id) ? dict1[m.Id] : 0;
@@ -135,13 +135,13 @@ namespace TableConfig.Controllers.Sys
             var response = new SysProjectTablesRes
             {
                 Project = project,
-                Groups = groupList.Select(m =>
+                Groups = groupList.OrderBy(m => m.SortIndex).Select(m =>
                 {
                     var _m = m.Adapt<SysTableGroupsRes>();
                     _m.TableCount = tableList.Count(n => n.GroupId == m.Id);
                     return _m;
                 }).ToList(),
-                Tables = tableList.Select(m =>
+                Tables = tableList.OrderBy(m=>m.Name).Select(m =>
                 {
                     var _m = m.Adapt<SysTablesRes>();
                     _m.GroupName = groupList.FirstOrDefault(n => n.Id == m.GroupId)?.Name;
