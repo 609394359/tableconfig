@@ -4,6 +4,7 @@ import { useRouter, useRoute } from 'vue-router'
 import {
   Setting,
   Coin,
+  Avatar,
   Folder,
   Histogram,
   ArrowLeft,
@@ -38,7 +39,7 @@ const menuItems = [
   {
     path: '/users',
     title: '账号管理',
-    icon: Coin
+    icon: Avatar
   }
 ]
 

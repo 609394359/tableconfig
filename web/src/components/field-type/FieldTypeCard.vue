@@ -17,8 +17,8 @@ defineEmits<{
 <template>
   <div class="glass rounded-xl p-5 card-hover group">
     <div class="flex items-center justify-between mb-4">
-      <div class="flex-1">
-        <!-- <h3 class="text-lg font-semibold text-white mb-2">{{ fieldType.name }}</h3> -->
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center border border-cyan-500/30">
+        <el-icon :size="24" class="text-cyan-400"><Memo /></el-icon>
       </div>
       <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <el-tooltip content="数据库映射">

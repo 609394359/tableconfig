@@ -5,7 +5,7 @@ import * as projectApi from '@/api/project'
 
 const props = defineProps<{
   visible: boolean
-  databaseId:string
+  databaseId:string | ''
   currentTableId: string | null
   allTables: SysTables[]
 }>()

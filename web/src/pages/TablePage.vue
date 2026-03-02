@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref,reactive, computed, onMounted } from 'vue'
+import { ref,reactive, computed, onMounted,watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Back, FolderAdd, Folder, Grid, List, Search } from '@element-plus/icons-vue'
@@ -69,6 +69,11 @@ onMounted(async () => {
   ])
 })
 
+watch(() => selectedTableIdShow.value, (newVal) => {
+  if (newVal == false) {
+    loadList();
+  }
+})
 
 async function loadList() {
   const data = await projectApi.getTableList(projectId.value);
@@ -88,10 +93,10 @@ async function loadDatabaseList() {
 
 // 过滤后的表
 const filteredTables = computed(() => {
-  if (!searchQuery.value) return state.tableList
-  const query = searchQuery.value.toLowerCase()
+  if (!searchQuery.value && !selectedGroupId.value) return state.tableList
+  const query = searchQuery.value?.toLowerCase()
   return state.tableList.filter(db =>
-    db.name.toLowerCase().includes(query) || db.description.toLowerCase().includes(query) 
+    (selectedGroupId.value ? db.groupId === selectedGroupId.value : true) && (query ? (db.name.toLowerCase().includes(query) || db.description.toLowerCase().includes(query)) : true)
   )
 })
 
@@ -485,7 +490,7 @@ async function handleInherit(fieldIds: string[]) {
       v-model:visible="inheritDialogVisible"
       :current-table-id="selectedTableId"
       :all-tables="state.tableList"
-      :database-id="state.project.databaseId"
+      :database-id="state.project.databaseId|| ''"
       @inherit="handleInherit"
     />
   </div>
