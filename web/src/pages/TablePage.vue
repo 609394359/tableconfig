@@ -269,6 +269,9 @@ async function deleteField(field: SysTableFields) {
     await ElMessageBox.confirm(`确定要删除字段「${field.name}」吗？`, '删除确认', { type: 'warning' })
     await projectApi.delField( field.id)
     ElMessage.success('字段已删除')
+
+    const fieldList = await projectApi.getFieldList(state.project.databaseId, selectedTableId.value)
+    state.fieldList = fieldList
   } catch {
     // 用户取消
   }
@@ -394,12 +397,11 @@ async function handleInherit(fieldIds: string[]) {
     <!-- 表列表 - 列表视图 -->
     <div v-else class="glass rounded-xl overflow-hidden">
       <el-table :data="filteredTables" stripe>
-        <el-table-column prop="name" label="表名" width="180">
+        <el-table-column prop="name" label="表名" width="500">
           <template #default="{ row }">
-            <code class="text-blue-400 text-sm">{{ row.name }}</code>
+            <code class="text-blue-400 text-sm cursor-pointer" @click="openFieldEditor(row)">{{ row.name }}</code>
           </template>
         </el-table-column>
-        <el-table-column prop="displayName" label="显示名称" width="150" />
         <el-table-column label="分组" width="120">
           <template #default="{ row }">
             <span class="text-dark-400">{{ row.groupName }}</span>
@@ -415,9 +417,8 @@ async function handleInherit(fieldIds: string[]) {
             {{ row.fieldCount }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180" fixed="right">
+        <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button size="small" text @click="openFieldEditor(row)">编辑字段</el-button>
             <el-button size="small" text @click="openCopyTableDialog(row)">复制</el-button>
             <el-button size="small" text @click="openEditTableDialog(row)">编辑</el-button>
             <el-button size="small" text type="danger" @click="deleteTable(row)">删除</el-button>
